@@ -23,3 +23,14 @@ def abrir_conexao():
 def fechar_conexao(server_socket):
     server_socket.close()
     print('Conexão fechada')
+
+def enviar_mensagem(client_socket, mensagem, checkbox_ativo):
+    if client_socket and checkbox_ativo:
+        try:
+            client_socket.sendall(mensagem.encode())
+            print('Mensagem enviada')
+        except socket.error as e:
+            print(f'Erro ao enviar mensagem: {e}')
+    else:
+        if not client_socket:
+            print('Conexão fechada')

@@ -74,6 +74,17 @@ while True:
         clientes_conectados.clear()
         window['CLIENTES'].update(values=['Sem clientes conectados'])
 
+    elif event == 'ENVIAR':
+        if clientes_conectados:
+            mensagem = values['MSG']
+            #mensagem_cripto = values['MSG_CRIPTO']
+            #mensagem_bin = values['MSG_BIN']
+            #mensagem_alg = values['MSG_ALG']
+            #enviar_mensagem(connection, mensagem, mensagem_cripto, mensagem_bin, mensagem_alg)
+            enviar_mensagem(connection, mensagem, values['CHK_MSG'] )
+        else:
+            print('Nenhum cliente conectado') 
+
     elif event == 'CHK_MSG':
         valor = not values['CHK_MSG']
         window['MSG'].update(disabled=valor, value = '' if valor else None)

@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import socket
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from client_functions import *
 
 layout_client = [
     [sg.Text(' Gráfico:')],
@@ -38,7 +38,19 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
 
-
+    elif event == 'CONNECT':
+        server_ip = values['IP_CONEXAO']
+        window['STATUS'].update('Conectando...')
+        window.refresh()
+        client_socket = conectar(server_ip)
+        if client_socket:
+            window['STATUS'].update('Conectado')
+        else:
+            window['STATUS'].update('Erro ao conectar')
+    
+    elif event == 'DISCONNECT':
+        desconectar(client_socket)
+        window['STATUS'].update('Desconectado')
     
     print('Valores:  ', values)
 
