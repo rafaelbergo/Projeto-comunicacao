@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import socket
 import matplotlib.pyplot as plt
+from server_functions import *
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,7 +33,7 @@ layout_server = [
 layout_conexao = [
     [sg.Text('IP:'), sg.InputText(get_local_ip(), key='IP', disabled=True, size=(15, 1))],
     [sg.Button('Abrir Conexão', key='CONNECT', disabled=False), sg.Button('Encerrar Conexão', key='DISCONNECT',disabled=False)],
-    [sg.Text('Status:'), sg.Text('Desconectado', key='STATUS', size=(15, 1))],
+    [sg.Text('Status:'), sg.Text('Desconectado', key='STATUS', size=(25, 1))],
     [sg.HSeparator()],
     [sg.Text('Clientes Conectados:')],
     [sg.Listbox(values=['Sem clientes conectados'], key='CLIENTES', size=(30, 6), enable_events=False)]
@@ -52,6 +53,26 @@ while True:
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
+
+    elif event == 'CONNECT':
+        window['STATUS'].update('Aguardando conexão...')
+        window.refresh()
+        server_socket, connection, client_address = abrir_conexao()
+        if connection is None:
+            window['STATUS'].update('Tempo limite de conexão')
+            continue
+        if connection is not None:
+            window['STATUS'].update('Conectado')
+            window.refresh()
+        if client_address is not None:
+            clientes_conectados.append(client_address)
+            window['CLIENTES'].update(values=clientes_conectados)
+
+    elif event == 'DISCONNECT':
+        window['STATUS'].update('Desconectado')
+        fechar_conexao(server_socket)
+        clientes_conectados.clear()
+        window['CLIENTES'].update(values=['Sem clientes conectados'])
 
     elif event == 'CHK_MSG':
         valor = not values['CHK_MSG']
