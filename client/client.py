@@ -1,12 +1,7 @@
 import PySimpleGUI as sg
 import socket
-
-def get_local_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8', 80))
-    ip_local = s.getsockname()[0]
-    s.close()
-    return ip_local
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 layout_client = [
     [sg.Text(' Gráfico:')],

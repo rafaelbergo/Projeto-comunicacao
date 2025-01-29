@@ -8,8 +8,8 @@
             "name": "Python: server.py",
             "type": "debugpy",
             "request": "launch",
-            //"program": "${workspaceFolder}/server/server.py",
-            "program": "${workspaceFolder}/client/client.py",
+            "program": "${workspaceFolder}/server/server.py",
+            //"program": "${workspaceFolder}/client/client.py",
             "console": "integratedTerminal"
         }
     ]

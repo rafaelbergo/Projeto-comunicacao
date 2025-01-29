@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import socket
+import matplotlib.pyplot as plt
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,6 +33,9 @@ layout_conexao = [
     [sg.Text('IP:'), sg.InputText(get_local_ip(), key='IP', disabled=True, size=(15, 1))],
     [sg.Button('Abrir Conexão', key='CONNECT', disabled=False), sg.Button('Encerrar Conexão', key='DISCONNECT',disabled=False)],
     [sg.Text('Status:'), sg.Text('Desconectado', key='STATUS', size=(15, 1))],
+    [sg.HSeparator()],
+    [sg.Text('Clientes Conectados:')],
+    [sg.Listbox(values=['Sem clientes conectados'], key='CLIENTES', size=(30, 6), enable_events=False)]
 ]
 
 layout = [
@@ -39,6 +43,8 @@ layout = [
 ]
 
 window = sg.Window('Projeto Comunicacao - SERVER', layout)
+
+clientes_conectados = []
 
 
 while True:
@@ -63,7 +69,12 @@ while True:
         valor = not values['CHK_MSG_ALG']
         window['MSG_ALG'].update(disabled=valor, value = '' if valor else None)
     
+    if clientes_conectados:
+        window['CLIENTES'].update(values=clientes_conectados)
+    else:
+        window['CLIENTES'].update(values=['Sem clientes conectados'])
 
-    print('Valores:  ', values)
+
+    print('Valores: ', values)
 
 window.close()
