@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import socket
-import matplotlib.pyplot as plt
 from client_functions import *
 
 layout_client = [
@@ -32,8 +31,10 @@ layout = [
 
 window = sg.Window('Projeto Comunicacao - CLIENT', layout)
 
+client_socket = None
+
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=100)
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
@@ -49,10 +50,19 @@ while True:
             window['STATUS'].update('Erro ao conectar')
     
     elif event == 'DISCONNECT':
-        desconectar(client_socket)
+        if client_socket:
+            desconectar(client_socket)
+            client_socket = None
         window['STATUS'].update('Desconectado')
     
-    print('Valores:  ', values)
-
+    if client_socket:
+        try:
+            client_socket.setblocking(False)
+            mensagem = receber_mensagem(client_socket)
+            if mensagem:
+                window['REC_MSG'].update(mensagem)
+        except:
+            client_socket = None
+            window['STATUS'].update('Desconectado')
 
 window.close()

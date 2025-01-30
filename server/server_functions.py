@@ -1,5 +1,12 @@
 import socket
 
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    ip_local = s.getsockname()[0]
+    s.close()
+    return ip_local
+
 def abrir_conexao():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Cria a conexão TCP/IP
     server_address = ('0.0.0.0', 18000)  # 0.0.0.0 aceita conexao de qualquer IP 
@@ -24,8 +31,15 @@ def fechar_conexao(server_socket):
     server_socket.close()
     print('Conexão fechada')
 
-def enviar_mensagem(client_socket, mensagem, checkbox_ativo):
-    if client_socket and checkbox_ativo:
+def escolhe_envio(connection, mensagens, flags):
+    #if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+    if flags['chk_msg']:
+        print('Enviando mensagem')
+        print(mensagens['msg'])
+        enviar_mensagem(connection, mensagens['msg'])
+
+def enviar_mensagem(client_socket, mensagem):
+    if client_socket:
         try:
             client_socket.sendall(mensagem.encode())
             print('Mensagem enviada')

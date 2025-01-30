@@ -18,10 +18,11 @@ def desconectar(client_socket):
 
 def receber_mensagem(client_socket):
     try:
-        mensagem = client_socket.recv(1024).decode()
-        print('Mensagem recebida')
-        print(f'Mensagem: {mensagem}')
-        return mensagem
-    except socket.error as e:
-        print(f'Erro ao receber mensagem: {e}')
+        data = client_socket.recv(1024).decode()
+        if data:
+            print('Mensagem recebida')
+            print(f'Mensagem: {data}')
+            return data
+        return None
+    except:
         return None
