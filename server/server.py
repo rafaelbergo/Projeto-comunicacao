@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from server_functions import *
 
 
-
 layout_server = [
 
     [sg.Checkbox(' Mensagem ', default=True, key='CHK_MSG', enable_events=True)],
@@ -42,6 +41,9 @@ window = sg.Window('Projeto Comunicacao - SERVER', layout)
 
 clientes_conectados = []
 
+
+def atualizaCampo(campo, valor):
+    window[campo].update(value=valor)
 
 
 while True:
@@ -85,6 +87,7 @@ while True:
                 'chk_msg_bin': values['CHK_MSG_BIN'],
                 'chk_msg_alg': values['CHK_MSG_ALG']
             }
+            
             escolhe_envio(connection, mensagens, flags)
             #enviar_mensagem(connection, values['MSG'])
             #enviar_mensagem(connection, mensagem, values['CHK_MSG'] )

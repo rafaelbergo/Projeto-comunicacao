@@ -1,4 +1,12 @@
 import socket
+import os
+import base64
+from dotenv import load_dotenv, dotenv_values 
+from cryptography.fernet import Fernet
+
+#from server import atualizaCampo
+
+load_dotenv() 
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -34,9 +42,41 @@ def fechar_conexao(server_socket):
 def escolhe_envio(connection, mensagens, flags):
     #if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
     if flags['chk_msg']:
-        print('Enviando mensagem')
-        print(mensagens['msg'])
+        mensagem = mensagens['msg']
+        if flags['chk_msg_cripto']:
+            mensagem2 = criptografaFernet(mensagem) 
+            atualizaCampo('MSG_CRIPTO', mensagem2)
+
+
+    if flags['chk_msg_cripto']:
+        mensagem = mensagens['msg_cripto']
+
+
+
         enviar_mensagem(connection, mensagens['msg'])
+
+
+# Usa o algoritmo de Fernet para criptografar
+def criptografaFernet(mensagem): 
+    keyENV = os.getenv('KEY')
+    key = base64.b64decode(keyENV)
+    cipher = Fernet(key)
+
+    print(f"Mensagem original: {mensagem}")
+
+    # Criptografar a mensagem
+    mensagem_criptografada = cipher.encrypt(mensagem.encode())
+    print(f"Mensagem criptografada: {mensagem_criptografada}")
+
+    #print("Mensagem criptografada em formato binário (bits):")
+    #for byte in mensagem_criptografada:
+    #    print(f'{byte:08b}', end=' ')
+
+    #mensagem_descriptografada = cipher.decrypt(mensagem_criptografada).decode()
+    #print(f"Mensagem descriptografada: {mensagem_descriptografada}")
+
+    return mensagem_criptografada
+
 
 def enviar_mensagem(client_socket, mensagem):
     if client_socket:
