@@ -88,7 +88,7 @@ while True:
                 'chk_msg_alg': values['CHK_MSG_ALG']
             }
             
-            escolhe_envio(connection, mensagens, flags)
+            escolhe_envio(connection, mensagens, flags, atualizaCampo)
             #enviar_mensagem(connection, values['MSG'])
             #enviar_mensagem(connection, mensagem, values['CHK_MSG'] )
         else:
