@@ -40,27 +40,119 @@ def fechar_conexao(server_socket):
     print('Conexão fechada')
 
 def escolhe_envio(connection, mensagens, flags, atualizaCampo):
-    if flags['chk_msg']:
+    # Caso para mensagem, mensagem criptografada, mensagem em binário e mensagem com algoritmo
+    if flags['chk_msg']: 
         mensagem = mensagens['msg']
+
         if flags['chk_msg_cripto']:
             mensagem2 = criptografaFernet(mensagem) 
-            print(f"Mensagem criptografada: {mensagem2}")
-            atualizaCampo('MSG_CRIPTO', mensagem2.decode())
+            print(f"Mensagem criptografada: {mensagem2}") ##
+            atualizaCampo('MSG_CRIPTO', mensagem2)
 
             if flags['chk_msg_bin']:
                 mensagem3 = converteBinario(mensagem2)
-                print(f"Mensagem em binário: {mensagem3}")
+                print(f"Mensagem em binário: {mensagem3}") ##
                 atualizaCampo('MSG_BIN', mensagem3)
 
                 if flags['chk_msg_alg']:
-                    mensagem4 = converteBinario(mensagem2)
+                    mensagem4 = aplicaAlgoritmo_8b6T(mensagem2)
+                    atualizaCampo('MSG_ALG', mensagem4)
+                    criaGrafico(mensagem4)
                     #enviar_mensagem(connection, mensagem4)
+                    return
 
+    # Caso para mensagem criptografada, mensagem em binário e mensagem com algoritmo
     if flags['chk_msg_cripto']:
         mensagem = mensagens['msg_cripto']
+        atualizaCampo('MSG_CRIPTO', mensagem)
+
+        if flags['chk_msg_bin']:
+            mensagem2 = converteBinario(mensagem)
+            atualizaCampo('MSG_BIN', mensagem2)
+
+            if flags['chk_msg_alg']:
+                mensagem3 = aplicaAlgoritmo_8b6T(mensagem)
+                atualizaCampo('MSG_ALG', mensagem3)
+                criaGrafico(mensagem3)
+                #enviar_mensagem(connection, mensagem3)
+                return
 
 
-        enviar_mensagem(connection, mensagens['msg'])
+    # Caso para mensagem em binário e mensagem com algoritmo
+    if flags['chk_msg_bin']:
+        mensagem = mensagens['msg_bin']
+        atualizaCampo('MSG_BIN', mensagem)
+
+        if flags['chk_msg_alg']:
+            mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
+            atualizaCampo('MSG_ALG', mensagem2)
+            criaGrafico(mensagem2)
+            #enviar_mensagem(connection, mensagem2)
+            return
+
+
+    # Caso para mensagem com algoritmo
+    if flags['chk_msg_alg']:
+        mensagem = mensagens['msg_alg']
+        atualizaCampo('MSG_ALG', mensagem)
+        #enviar_mensagem(connection, mensagem)
+        return
+    
+    # Caso para mensagem somente
+    if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        atualizaCampo('MSG', mensagem)
+        enviar_mensagem(connection, mensagem)
+        return
+    
+    # Caso para mensagem criptografada somente
+    if not flags['chk_msg'] and flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg_cripto']
+        atualizaCampo('MSG_CRIPTO', mensagem)
+        enviar_mensagem(connection, mensagem)
+        return
+    
+    # Caso para mensagem em binário somente
+    if not flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg_bin']
+        atualizaCampo('MSG_BIN', mensagem)
+        enviar_mensagem(connection, mensagem)
+        return
+    
+    # Caso para mensagem com algoritmo somente
+    if not flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
+        mensagem = mensagens['msg_alg']
+        atualizaCampo('MSG_ALG', mensagem)
+        enviar_mensagem(connection, mensagem)
+        return
+    
+    # Caso para mensagem e mensagem criptografada
+    if flags['chk_msg'] and flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        mensagem2 = criptografaFernet(mensagem)
+        atualizaCampo('MSG_CRIPTO', mensagem2)
+        enviar_mensagem(connection, mensagem2)
+        return
+
+    # Caso para mensagem e mensagem em binário
+    if flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        mensagem2 = converteBinario(mensagem)
+        atualizaCampo('MSG_BIN', mensagem2)
+        enviar_mensagem(connection, mensagem2)
+        return
+    
+    # Caso para mensagem e mensagem com algoritmo
+    if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
+        atualizaCampo('MSG_ALG', mensagem2)
+        enviar_mensagem(connection, mensagem2)
+        return
+    
+    else:
+        return
+
 
 
 # Usa o algoritmo de Fernet para criptografar
@@ -78,9 +170,12 @@ def converteBinario(mensagem):
         mensagem = mensagem.decode('utf-8')
 
     binario = ' '.join(f'{ord(char):08b}' for char in mensagem)
-    return binario
+    return binario.decode()
 
 def aplicaAlgoritmo_8b6T(mensagem): 
+    pass
+
+def criaGrafico(mensagem):
     pass
 
 def enviar_mensagem(client_socket, mensagem):
