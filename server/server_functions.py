@@ -30,7 +30,6 @@ def abrir_conexao():
     try:
         connection, client_address = server_socket.accept()
         print(f'Conexão estabelecida com {client_address}')
-        print(connection)
         return server_socket, connection, client_address
     except socket.timeout:
         print('Tempo limite de conexão atingido')
@@ -220,7 +219,6 @@ def enviar_mensagem(client_socket, mensagem, opcao):
             }
             dados_json = json.dumps(dados).encode()
             client_socket.sendall(dados_json)
-            print(dados_json)
 
         except socket.error as e:
             print(f'Erro ao enviar mensagem: {e}')

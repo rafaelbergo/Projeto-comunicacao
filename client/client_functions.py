@@ -67,8 +67,6 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
     ##
     elif opcao == 5:  # Caso para mensagem somente
         atualizaCampo('REC_MSG', mensagem)  
-        print(f"Mensagem recebida via fuction: {mensagem}")
-        print(f"Campo atualizado: REC_MSG")
         return
     ##
     elif opcao == 6:  # Caso para mensagem criptografada somente
@@ -90,7 +88,6 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
     elif opcao == 9:  # Caso para mensagem e mensagem criptografada
         atualizaCampo('REC_MSG_CRIPTO', mensagem)  
         mensagem2 = descriptografaFernet(mensagem) 
-        print(f"Mensagem decript: {mensagem2}")
         atualizaCampo('REC_MSG', mensagem2) 
         return
     ##
@@ -127,12 +124,9 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
 
 def descriptografaFernet(mensagem_criptografada):
     keyENV = os.getenv('KEY')
-    print(f"Key base64: {keyENV}")
     key = base64.b64decode(keyENV)
-    print(f"Key: {key}")
     cipher = Fernet(key)
     mensagem = cipher.decrypt(mensagem_criptografada.encode()).decode()
-    print(f"Mensagem decript: {mensagem}")
     return mensagem
 
 
