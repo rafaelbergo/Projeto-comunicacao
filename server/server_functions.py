@@ -4,6 +4,7 @@ import os
 import base64
 from dotenv import load_dotenv, dotenv_values 
 from cryptography.fernet import Fernet
+import pandas as pd
 
 #from server import atualizaCampo
 
@@ -150,13 +151,15 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         enviar_mensagem(connection, mensagem2, opcao)
         return
     
-    # Caso para mensagem e mensagem com algoritmo
-    if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
+    # Caso para mensagem, mensagem em binario e mensagem com algoritmo
+    if flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg']
-        mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
-        atualizaCampo('MSG_ALG', mensagem2)
-        criaGrafico(mensagem2)
+        mensagem2 = converteBinario(mensagem)
+        atualizaCampo('MSG_BIN', mensagem2)
+        mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
+        atualizaCampo('MSG_ALG', mensagem3)
         opcao = 11
+        print(mensagem2)
         enviar_mensagem(connection, mensagem2, opcao)
         return
     
@@ -181,6 +184,17 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         enviar_mensagem(connection, mensagem2, opcao)
         return
     
+    # Caso para mensagem em binario e mensagem com algoritmo
+    if not flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and flags['chk_msg_alg']:
+        mensagem = mensagens['msg_bin']
+        print("bin: ", mensagem)
+        atualizaCampo('MSG_BIN', mensagem)
+        mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
+        print("alg: ", mensagem2)
+        atualizaCampo('MSG_ALG', mensagem2)
+        opcao = 14
+        enviar_mensagem(connection, mensagem2, opcao)
+        return
     else:
         return
 
@@ -203,8 +217,45 @@ def converteBinario(mensagem):
     binario = ' '.join(f'{ord(char):08b}' for char in mensagem)
     return binario
 
-def aplicaAlgoritmo_8b6T(mensagem): 
-    pass
+def aplicaAlgoritmo_8b6T(mensagem):
+    encoded = ''
+    mensagem = mensagem.replace(" ", "") 
+    table = pd.read_csv('8B6T2.csv')
+
+    table['Binary'] = table['Binary'].apply(lambda x: str(x).strip().zfill(8)) 
+    
+    for i in range(0, len(mensagem), 8):
+        byte = mensagem[i:i+8]
+        
+        matching_row = table[table['Binary'] == byte]
+        if not matching_row.empty:
+            encoded += matching_row['Value'].iloc[0]
+        else:
+            raise ValueError(f"Valor binário '{byte}' não encontrado na tabela 8B6T.")
+    
+    return encoded
+
+def flip(data):
+    flipped = ''
+    counter = 0
+    for i in range(len(data)):
+        if data[i] == '+':
+            flipped = flipped + '-'
+            counter += 1
+        elif data[i] == '-':
+            flipped = flipped + '+'
+            counter -= 1
+        else:
+            flipped = flipped + '0'
+    if counter >= 1:
+        return flipped
+    if counter <= -1:
+        return flipped
+    else: return data
+
+
+
+
 
 def criaGrafico(mensagem):
     pass
