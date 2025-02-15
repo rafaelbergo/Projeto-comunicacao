@@ -47,12 +47,10 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
 
         if flags['chk_msg_cripto']:
             mensagem2 = criptografaFernet(mensagem) 
-            print(f"Mensagem criptografada: {mensagem2}") ##
             atualizaCampo('MSG_CRIPTO', mensagem2)
 
             if flags['chk_msg_bin']:
                 mensagem3 = converteBinario(mensagem2)
-                print(f"Mensagem em binário: {mensagem3}") ##
                 atualizaCampo('MSG_BIN', mensagem3)
 
                 if flags['chk_msg_alg']:
@@ -60,7 +58,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
                     atualizaCampo('MSG_ALG', mensagem4)
                     criaGrafico(mensagem4)
                     opcao = 1
-                    #enviar_mensagem(connection, mensagem4, opcao)
+                    enviar_mensagem(connection, mensagem4, opcao)
                     return
 
     # Caso para mensagem criptografada, mensagem em binário e mensagem com algoritmo
@@ -77,9 +75,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
                 atualizaCampo('MSG_ALG', mensagem3)
                 criaGrafico(mensagem3)
                 opcao = 2
-                #enviar_mensagem(connection, mensagem3, opcao)
+                enviar_mensagem(connection, mensagem3, opcao)
                 return
-
 
     # Caso para mensagem em binário e mensagem com algoritmo
     if flags['chk_msg_bin']:
@@ -91,7 +88,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
             atualizaCampo('MSG_ALG', mensagem2)
             criaGrafico(mensagem2)
             opcao = 3
-            #enviar_mensagem(connection, mensagem2, opcao)
+            enviar_mensagem(connection, mensagem2, opcao)
             return
 
 
@@ -100,7 +97,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg_alg']
         atualizaCampo('MSG_ALG', mensagem)
         opcao = 4
-        #enviar_mensagem(connection, mensagem, opcao)
+        enviar_mensagem(connection, mensagem, opcao)
         return
     
     # Caso para mensagem somente
@@ -116,7 +113,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg_cripto']
         atualizaCampo('MSG_CRIPTO', mensagem)
         opcao = 6
-        enviar_mensagem(connection, mensagem)
+        enviar_mensagem(connection, mensagem, opcao)
 
         return
     
@@ -124,14 +121,16 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
     if not flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and not flags['chk_msg_alg']:
         mensagem = mensagens['msg_bin']
         atualizaCampo('MSG_BIN', mensagem)
-        enviar_mensagem(connection, mensagem)
+        opcao = 7
+        enviar_mensagem(connection, mensagem, opcao)
         return
     
     # Caso para mensagem com algoritmo somente
     if not flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg_alg']
         atualizaCampo('MSG_ALG', mensagem)
-        enviar_mensagem(connection, mensagem)
+        opcao = 8
+        enviar_mensagem(connection, mensagem, opcao)
         return
     
     # Caso para mensagem e mensagem criptografada
@@ -139,7 +138,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg']
         mensagem2 = criptografaFernet(mensagem)
         atualizaCampo('MSG_CRIPTO', mensagem2)
-        enviar_mensagem(connection, mensagem2)
+        opcao = 9
+        enviar_mensagem(connection, mensagem2, opcao)
         return
 
     # Caso para mensagem e mensagem em binário
@@ -147,7 +147,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg']
         mensagem2 = converteBinario(mensagem)
         atualizaCampo('MSG_BIN', mensagem2)
-        enviar_mensagem(connection, mensagem2)
+        opcao = 10
+        enviar_mensagem(connection, mensagem2, opcao)
         return
     
     # Caso para mensagem e mensagem com algoritmo
@@ -155,7 +156,30 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg']
         mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
         atualizaCampo('MSG_ALG', mensagem2)
-        enviar_mensagem(connection, mensagem2)
+        criaGrafico(mensagem2)
+        opcao = 11
+        enviar_mensagem(connection, mensagem2, opcao)
+        return
+    
+    # Caso para mensagem, mensagem criptografada e mensagem em binário
+    if flags['chk_msg'] and flags['chk_msg_cripto'] and flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        mensagem2 = criptografaFernet(mensagem)
+        atualizaCampo('MSG_CRIPTO', mensagem2)
+        mensagem3 = converteBinario(mensagem2)
+        atualizaCampo('MSG_BIN', mensagem3)
+        opcao = 12
+        enviar_mensagem(connection, mensagem3, opcao)
+        return
+    
+    # Caso para mensagem criptografada e mensagem em binário
+    if not flags['chk_msg'] and flags['chk_msg_cripto'] and flags['chk_msg_bin'] and not flags['chk_msg_alg']:
+        mensagem = mensagens['msg_cripto']
+        atualizaCampo('MSG_CRIPTO', mensagem)
+        mensagem2 = converteBinario(mensagem)
+        atualizaCampo('MSG_BIN', mensagem2)
+        opcao = 13
+        enviar_mensagem(connection, mensagem2, opcao)
         return
     
     else:
@@ -171,14 +195,14 @@ def criptografaFernet(mensagem):
 
     mensagem_criptografada = cipher.encrypt(mensagem.encode())
 
-    return mensagem_criptografada
+    return mensagem_criptografada.decode()
 
 def converteBinario(mensagem):
     if isinstance(mensagem, bytes):
         mensagem = mensagem.decode('utf-8')
 
     binario = ' '.join(f'{ord(char):08b}' for char in mensagem)
-    return binario.decode()
+    return binario
 
 def aplicaAlgoritmo_8b6T(mensagem): 
     pass

@@ -33,6 +33,16 @@ window = sg.Window('Projeto Comunicacao - CLIENT', layout)
 
 client_socket = None
 
+def limpa_campos():
+    window['REC_MSG'].update('')
+    window['REC_MSG_CRIPTO'].update('')
+    window['REC_MSG_BIN'].update('')
+    window['REC_MSG_ALG'].update('')
+    window.refresh()
+
+def atualizaCampo(campo, valor):
+    window[campo].update(value=valor)
+    
 while True:
     event, values = window.read(timeout=100)
 
@@ -54,13 +64,19 @@ while True:
             desconectar(client_socket)
             client_socket = None
         window['STATUS'].update('Desconectado')
+        window['REC_MSG'].update('')
+        window['REC_MSG_CRIPTO'].update('')
+        window['REC_MSG_BIN'].update('')
+        window['REC_MSG_ALG'].update('')
+        window.refresh()
     
     if client_socket:
         try:
             client_socket.setblocking(False)
-            mensagem = receber_mensagem(client_socket)
-            if mensagem:
-                window['REC_MSG'].update(mensagem)
+            opcao, mensagem= receber_mensagem(client_socket)
+            if mensagem is not None and opcao is not None:
+                limpa_campos()
+                escolhe_opcao(opcao, mensagem, atualizaCampo)
         except:
             client_socket = None
             window['STATUS'].update('Desconectado')
