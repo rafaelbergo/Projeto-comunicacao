@@ -1,3 +1,4 @@
+import json
 import socket
 import os
 import base64
@@ -39,7 +40,7 @@ def fechar_conexao(server_socket):
     server_socket.close()
     print('Conexão fechada')
 
-def escolhe_envio(connection, mensagens, flags, atualizaCampo):
+def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
     # Caso para mensagem, mensagem criptografada, mensagem em binário e mensagem com algoritmo
     if flags['chk_msg']: 
         mensagem = mensagens['msg']
@@ -58,7 +59,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo):
                     mensagem4 = aplicaAlgoritmo_8b6T(mensagem2)
                     atualizaCampo('MSG_ALG', mensagem4)
                     criaGrafico(mensagem4)
-                    #enviar_mensagem(connection, mensagem4)
+                    opcao = 1
+                    #enviar_mensagem(connection, mensagem4, opcao)
                     return
 
     # Caso para mensagem criptografada, mensagem em binário e mensagem com algoritmo
@@ -74,7 +76,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo):
                 mensagem3 = aplicaAlgoritmo_8b6T(mensagem)
                 atualizaCampo('MSG_ALG', mensagem3)
                 criaGrafico(mensagem3)
-                #enviar_mensagem(connection, mensagem3)
+                opcao = 2
+                #enviar_mensagem(connection, mensagem3, opcao)
                 return
 
 
@@ -87,7 +90,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo):
             mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
             atualizaCampo('MSG_ALG', mensagem2)
             criaGrafico(mensagem2)
-            #enviar_mensagem(connection, mensagem2)
+            opcao = 3
+            #enviar_mensagem(connection, mensagem2, opcao)
             return
 
 
@@ -95,21 +99,25 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo):
     if flags['chk_msg_alg']:
         mensagem = mensagens['msg_alg']
         atualizaCampo('MSG_ALG', mensagem)
-        #enviar_mensagem(connection, mensagem)
+        opcao = 4
+        #enviar_mensagem(connection, mensagem, opcao)
         return
     
     # Caso para mensagem somente
     if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
         mensagem = mensagens['msg']
         atualizaCampo('MSG', mensagem)
-        enviar_mensagem(connection, mensagem)
+        opcao = 5
+        enviar_mensagem(connection, mensagem, opcao)
         return
     
     # Caso para mensagem criptografada somente
     if not flags['chk_msg'] and flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
         mensagem = mensagens['msg_cripto']
         atualizaCampo('MSG_CRIPTO', mensagem)
+        opcao = 6
         enviar_mensagem(connection, mensagem)
+
         return
     
     # Caso para mensagem em binário somente
@@ -178,11 +186,18 @@ def aplicaAlgoritmo_8b6T(mensagem):
 def criaGrafico(mensagem):
     pass
 
-def enviar_mensagem(client_socket, mensagem):
+def enviar_mensagem(client_socket, mensagem, opcao):
     if client_socket:
         try:
-            client_socket.sendall(mensagem.encode())
-            print('Mensagem enviada')
+            # Salva os dados no formato de dicionario
+            dados = {
+                'opcao': opcao,
+                'mensagem': mensagem
+            }
+            dados_json = json.dumps(dados).encode()
+            client_socket.sendall(dados_json)
+            print(dados_json)
+
         except socket.error as e:
             print(f'Erro ao enviar mensagem: {e}')
     else:
