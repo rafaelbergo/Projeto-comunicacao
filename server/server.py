@@ -89,8 +89,7 @@ while True:
             }
             opcao = 0
             escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao)
-            #enviar_mensagem(connection, values['MSG'])
-            #enviar_mensagem(connection, mensagem, values['CHK_MSG'] )
+
         else:
             print('Nenhum cliente conectado') 
 

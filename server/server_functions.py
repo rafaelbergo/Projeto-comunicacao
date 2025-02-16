@@ -54,9 +54,9 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
                 atualizaCampo('MSG_BIN', mensagem3)
 
                 if flags['chk_msg_alg']:
-                    mensagem4 = aplicaAlgoritmo_8b6T(mensagem2)
+                    mensagem4 = aplicaAlgoritmo_8b6T(mensagem3)
                     atualizaCampo('MSG_ALG', mensagem4)
-                    criaGrafico(mensagem4)
+                    #criaGrafico(mensagem4)
                     opcao = 1
                     enviar_mensagem(connection, mensagem4, opcao)
                     return
@@ -71,7 +71,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
             atualizaCampo('MSG_BIN', mensagem2)
 
             if flags['chk_msg_alg']:
-                mensagem3 = aplicaAlgoritmo_8b6T(mensagem)
+                mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
                 atualizaCampo('MSG_ALG', mensagem3)
                 criaGrafico(mensagem3)
                 opcao = 2
@@ -81,7 +81,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
     # Caso para mensagem em binário e mensagem com algoritmo
     if flags['chk_msg_bin']:
         mensagem = mensagens['msg_bin']
-        atualizaCampo('MSG_BIN', mensagem)
+        #atualizaCampo('MSG_BIN', mensagem)
 
         if flags['chk_msg_alg']:
             mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
@@ -154,13 +154,15 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
     # Caso para mensagem, mensagem em binario e mensagem com algoritmo
     if flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg']
+        print('mensagem', mensagem)
         mensagem2 = converteBinario(mensagem)
+        print('bin', mensagem2)
         atualizaCampo('MSG_BIN', mensagem2)
         mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
         atualizaCampo('MSG_ALG', mensagem3)
         opcao = 11
         print(mensagem2)
-        enviar_mensagem(connection, mensagem2, opcao)
+        enviar_mensagem(connection, mensagem3, opcao)
         return
     
     # Caso para mensagem, mensagem criptografada e mensagem em binário
@@ -195,6 +197,20 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         opcao = 14
         enviar_mensagem(connection, mensagem2, opcao)
         return
+    
+    # Caso para mensagem e mensagem com algoritmo
+    if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
+        mensagem = mensagens['msg']
+        print("msg: ", mensagem)
+        mensagem2 = converteBinario(mensagem)
+        print("bin: ", mensagem2)
+        mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
+        print("alg: ", mensagem3)
+        atualizaCampo('MSG_ALG', mensagem3)
+        opcao = 15
+        enviar_mensagem(connection, mensagem3, opcao)
+        return
+    
     else:
         return
 
@@ -229,7 +245,7 @@ def aplicaAlgoritmo_8b6T(mensagem):
         
         matching_row = table[table['Binary'] == byte]
         if not matching_row.empty:
-            encoded += matching_row['Value'].iloc[0]
+            encoded += matching_row['Value'].iloc[0] + ' '
         else:
             raise ValueError(f"Valor binário '{byte}' não encontrado na tabela 8B6T.")
     
