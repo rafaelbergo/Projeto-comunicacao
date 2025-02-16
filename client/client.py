@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import socket
 from client_functions import *
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 layout_client = [
     [sg.Text(' Gráfico:')],
@@ -42,7 +43,15 @@ def limpa_campos():
 
 def atualizaCampo(campo, valor):
     window[campo].update(value=valor)
-    
+
+def draw_figure(canvas_elem, figure):
+    """Renderiza o gráfico no canvas"""
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas_elem.TKCanvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
+
 while True:
     event, values = window.read(timeout=100)
 

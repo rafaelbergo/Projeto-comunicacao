@@ -1,7 +1,9 @@
 import PySimpleGUI as sg
 import socket
 import matplotlib.pyplot as plt
+import numpy as np
 from server_functions import *
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 layout_server = [
@@ -19,7 +21,7 @@ layout_server = [
     [sg.Multiline(size=(50, 5), key='MSG_ALG', disabled=False, no_scrollbar=True)],
 
     [sg.Text(' Gráfico:')],
-    [sg.Canvas(key='GRAFICO', size=(400, 150))],
+    [sg.Canvas(key='GRAFICO', size=(300, 100))],
 
     [sg.Button('Enviar', key='ENVIAR', disabled=False)],
 ]
@@ -44,6 +46,49 @@ clientes_conectados = []
 
 def atualizaCampo(campo, valor):
     window[campo].update(value=valor)
+
+
+def draw_figure(canvas, figure):
+    for widget in canvas.winfo_children():
+        widget.destroy()
+
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
+def criaGrafico1(mensagem):
+    fig = plt.Figure(figsize=(5, 4), dpi=100)
+    t = np.arange(0, 3, 0.01)
+    fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+
+    window['GRAFICO'].TKCanvas.update()  
+    draw_figure(window['GRAFICO'].TKCanvas, fig)
+
+
+def criaGrafico(mensagem):
+    mensagem = mensagem.replace(" ", "")
+
+    bit_array = []
+    plot_data = list(''.join(mensagem))
+    
+    for bit in plot_data:
+        if bit == '+':
+            bit_array.append(1)    # Adiciona 1 para '+'
+        elif bit == '-':
+            bit_array.append(-1)   # Adiciona -1 para '-'
+        else:
+            bit_array.append(0)    # Adiciona 0 para qualquer outro caractere
+    
+    fig, ax = plt.subplots(figsize=(8, 3))
+    ax.step(range(len(bit_array)), bit_array, where='post', color='darkblue', linewidth=3)
+    ax.set_title('Algoritmo 8b6T')
+    ax.set_yticks([-1, 0, 1])
+    window['GRAFICO'].TKCanvas.update() 
+    draw_figure(window['GRAFICO'].TKCanvas, fig)
+
+
+
 
 
 while True:
@@ -88,7 +133,7 @@ while True:
                 'chk_msg_alg': values['CHK_MSG_ALG']
             }
             opcao = 0
-            escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao)
+            escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafico)
 
         else:
             print('Nenhum cliente conectado') 

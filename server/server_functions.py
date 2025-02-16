@@ -40,7 +40,7 @@ def fechar_conexao(server_socket):
     server_socket.close()
     print('Conexão fechada')
 
-def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
+def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafico):
     # Caso para mensagem, mensagem criptografada, mensagem em binário e mensagem com algoritmo
     if flags['chk_msg']: 
         mensagem = mensagens['msg']
@@ -56,7 +56,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
                 if flags['chk_msg_alg']:
                     mensagem4 = aplicaAlgoritmo_8b6T(mensagem3)
                     atualizaCampo('MSG_ALG', mensagem4)
-                    #criaGrafico(mensagem4)
+                    criaGrafico(mensagem4)
                     opcao = 1
                     enviar_mensagem(connection, mensagem4, opcao)
                     return
@@ -73,7 +73,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
             if flags['chk_msg_alg']:
                 mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
                 atualizaCampo('MSG_ALG', mensagem3)
-                criaGrafico(mensagem3)
+                #criaGrafico(mensagem3)
                 opcao = 2
                 enviar_mensagem(connection, mensagem3, opcao)
                 return
@@ -83,7 +83,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         mensagem = mensagens['msg_bin']
         mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
         atualizaCampo('MSG_ALG', mensagem2)
-        criaGrafico(mensagem2)
+        #criaGrafico(mensagem2)
         opcao = 3
         enviar_mensagem(connection, mensagem2, opcao)
         return
@@ -196,6 +196,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         print("alg: ", mensagem2)
         atualizaCampo('MSG_ALG', mensagem2)
         opcao = 15
+        criaGrafico(mensagem2)
         enviar_mensagem(connection, mensagem2, opcao)
         return
     
@@ -241,8 +242,7 @@ def aplicaAlgoritmo_8b6T(mensagem):
 
     return encoded
 
-def criaGrafico(mensagem):
-    pass
+
 
 def enviar_mensagem(client_socket, mensagem, opcao):
     if client_socket:
