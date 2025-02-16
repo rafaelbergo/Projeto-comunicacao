@@ -236,7 +236,7 @@ def converteBinario(mensagem):
 def aplicaAlgoritmo_8b6T(mensagem):
     encoded = ''
     mensagem = mensagem.replace(" ", "") 
-    table = pd.read_csv('8B6T2.csv')
+    table = pd.read_csv('8B6T.csv')
 
     table['Binary'] = table['Binary'].apply(lambda x: str(x).strip().zfill(8)) 
     
@@ -246,32 +246,8 @@ def aplicaAlgoritmo_8b6T(mensagem):
         matching_row = table[table['Binary'] == byte]
         if not matching_row.empty:
             encoded += matching_row['Value'].iloc[0] + ' '
-        else:
-            raise ValueError(f"Valor binário '{byte}' não encontrado na tabela 8B6T.")
-    
+
     return encoded
-
-def flip(data):
-    flipped = ''
-    counter = 0
-    for i in range(len(data)):
-        if data[i] == '+':
-            flipped = flipped + '-'
-            counter += 1
-        elif data[i] == '-':
-            flipped = flipped + '+'
-            counter -= 1
-        else:
-            flipped = flipped + '0'
-    if counter >= 1:
-        return flipped
-    if counter <= -1:
-        return flipped
-    else: return data
-
-
-
-
 
 def criaGrafico(mensagem):
     pass

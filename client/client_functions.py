@@ -176,7 +176,7 @@ def desconverteBinario(mensagem_binaria):
 def removeAlgoritmo_8b6T(mensagem):
     decoded_binary = '' 
     
-    table = pd.read_csv('8B6T2.csv')
+    table = pd.read_csv('8B6T.csv')
     
     table['Binary'] = table['Binary'].apply(lambda x: str(x).strip().zfill(8))
     groups = mensagem.split(' ')
