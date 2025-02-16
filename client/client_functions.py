@@ -78,14 +78,12 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         atualizaCampo('REC_MSG', mensagem3)
         return  
     ##
-    elif opcao == 4:  # Caso para mensagem com algoritmo
+    elif opcao == 4:  # Caso para mensagem com algoritmo somente
         atualizaCampo('REC_MSG_ALG', mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2)
-        atualizaCampo('REC_MSG_CRIPTO', mensagem3)
-        mensagem4 = descriptografaFernet(mensagem3)
-        atualizaCampo('REC_MSG', mensagem4)
+        atualizaCampo('REC_MSG', mensagem3)
         return
     ##
     elif opcao == 5:  # Caso para mensagem somente
@@ -103,9 +101,8 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem = desconverteBinario(mensagem)
         atualizaCampo('REC_MSG', mensagem) 
         return 
-
-    elif opcao == 8:  # Caso para mensagem com algoritmo somente
-        atualizaCampo('REC_MSG_ALG', mensagem)  
+    ##
+    elif opcao == 8:  # Caso vazio
         return
     ##
     elif opcao == 9:  # Caso para mensagem e mensagem criptografada
@@ -119,7 +116,7 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem = desconverteBinario(mensagem) 
         atualizaCampo('REC_MSG', mensagem) 
         return
-
+    ##
     elif opcao == 11:  # Caso para mensagem, mensagem em binario e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
@@ -143,13 +140,13 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem3 = descriptografaFernet(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
         return
-    
+    ##
     if opcao == 14:  # Caso para mensagem em binario e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         return
-    
+    ##
     if opcao == 15:  # Caso para mensagem e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)

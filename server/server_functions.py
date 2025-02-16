@@ -79,21 +79,17 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
                 return
 
     # Caso para mensagem em binário e mensagem com algoritmo
-    if flags['chk_msg_bin']:
+    if flags['chk_msg_bin'] and not flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg_bin']
-        #atualizaCampo('MSG_BIN', mensagem)
-
-        if flags['chk_msg_alg']:
-            mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
-            atualizaCampo('MSG_ALG', mensagem2)
-            criaGrafico(mensagem2)
-            opcao = 3
-            enviar_mensagem(connection, mensagem2, opcao)
-            return
-
+        mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
+        atualizaCampo('MSG_ALG', mensagem2)
+        criaGrafico(mensagem2)
+        opcao = 3
+        enviar_mensagem(connection, mensagem2, opcao)
+        return
 
     # Caso para mensagem com algoritmo
-    if flags['chk_msg_alg']:
+    if flags['chk_msg_alg'] and not flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin']:
         mensagem = mensagens['msg_alg']
         atualizaCampo('MSG_ALG', mensagem)
         opcao = 4
@@ -125,13 +121,8 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
         enviar_mensagem(connection, mensagem, opcao)
         return
     
-    # Caso para mensagem com algoritmo somente
-    if not flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
-        mensagem = mensagens['msg_alg']
-        atualizaCampo('MSG_ALG', mensagem)
-        opcao = 8
-        enviar_mensagem(connection, mensagem, opcao)
-        return
+    # Caso 8 vazio
+    
     
     # Caso para mensagem e mensagem criptografada
     if flags['chk_msg'] and flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
@@ -201,14 +192,11 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao):
     # Caso para mensagem e mensagem com algoritmo
     if flags['chk_msg'] and not flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg']
-        print("msg: ", mensagem)
-        mensagem2 = converteBinario(mensagem)
-        print("bin: ", mensagem2)
-        mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
-        print("alg: ", mensagem3)
-        atualizaCampo('MSG_ALG', mensagem3)
+        mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
+        print("alg: ", mensagem2)
+        atualizaCampo('MSG_ALG', mensagem2)
         opcao = 15
-        enviar_mensagem(connection, mensagem3, opcao)
+        enviar_mensagem(connection, mensagem2, opcao)
         return
     
     else:
@@ -234,6 +222,10 @@ def converteBinario(mensagem):
     return binario
 
 def aplicaAlgoritmo_8b6T(mensagem):
+
+    if not all(bit in "01" for bit in mensagem.replace(" ", "")):
+        mensagem = converteBinario(mensagem)  
+
     encoded = ''
     mensagem = mensagem.replace(" ", "") 
     table = pd.read_csv('8B6T.csv')
