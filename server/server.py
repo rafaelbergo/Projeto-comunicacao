@@ -5,23 +5,21 @@ import numpy as np
 from server_functions import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
 layout_server = [
-
     [sg.Checkbox(' Mensagem ', default=True, key='CHK_MSG', enable_events=True)],
-    [sg.Multiline(size=(50, 3), key='MSG', disabled=False, no_scrollbar=True)],
+    [sg.Multiline(size=(100, 3), key='MSG', disabled=False, no_scrollbar=True)],
 
     [sg.Checkbox(' Mensagem Criptografada:', default=True, key='CHK_MSG_CRIPTO', enable_events=True)],
-    [sg.Multiline(size=(50, 3), key='MSG_CRIPTO', disabled=False, no_scrollbar=True)],
+    [sg.Multiline(size=(100, 3), key='MSG_CRIPTO', disabled=False, no_scrollbar=True)],
 
     [sg.Checkbox(' Mensagem em Binário:', default=True, key='CHK_MSG_BIN', enable_events=True)],
-    [sg.Multiline(size=(50, 5), key='MSG_BIN', disabled=False, no_scrollbar=True)],
+    [sg.Multiline(size=(100, 5), key='MSG_BIN', disabled=False, no_scrollbar=True)],
 
     [sg.Checkbox(' Algoritmo aplicado a mensagem:', default=True, key='CHK_MSG_ALG', enable_events=True)],
-    [sg.Multiline(size=(50, 5), key='MSG_ALG', disabled=False, no_scrollbar=True)],
+    [sg.Multiline(size=(100, 5), key='MSG_ALG', disabled=False, no_scrollbar=True)],
 
     [sg.Text(' Gráfico:')],
-    [sg.Canvas(key='GRAFICO', size=(300, 100))],
+    [sg.Canvas(key='GRAFICO', size=(200, 100))],
 
     [sg.Button('Enviar', key='ENVIAR', disabled=False)],
 ]
@@ -43,11 +41,10 @@ window = sg.Window('Projeto Comunicacao - SERVER', layout)
 
 clientes_conectados = []
 
-
 def atualizaCampo(campo, valor):
     window[campo].update(value=valor)
 
-
+# Codigo adaptado de: https://www.tutorialspoint.com/pysimplegui/pysimplegui_matplotlib_integration.htm
 def draw_figure(canvas, figure):
     for widget in canvas.winfo_children():
         widget.destroy()
@@ -57,15 +54,6 @@ def draw_figure(canvas, figure):
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
-def criaGrafico1(mensagem):
-    fig = plt.Figure(figsize=(5, 4), dpi=100)
-    t = np.arange(0, 3, 0.01)
-    fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
-
-    window['GRAFICO'].TKCanvas.update()  
-    draw_figure(window['GRAFICO'].TKCanvas, fig)
-
-
 def criaGrafico(mensagem):
     mensagem = mensagem.replace(" ", "")
 
@@ -74,21 +62,19 @@ def criaGrafico(mensagem):
     
     for bit in plot_data:
         if bit == '+':
-            bit_array.append(1)    # Adiciona 1 para '+'
+            bit_array.append(1)    # Transforma + em 1
         elif bit == '-':
-            bit_array.append(-1)   # Adiciona -1 para '-'
+            bit_array.append(-1)   # Transforma - em -1
         else:
-            bit_array.append(0)    # Adiciona 0 para qualquer outro caractere
+            bit_array.append(0)    # Transforma 0 para qualquer outro caractere
     
     fig, ax = plt.subplots(figsize=(8, 3))
     ax.step(range(len(bit_array)), bit_array, where='post', color='darkblue', linewidth=3)
     ax.set_title('Algoritmo 8b6T')
     ax.set_yticks([-1, 0, 1])
+
     window['GRAFICO'].TKCanvas.update() 
     draw_figure(window['GRAFICO'].TKCanvas, fig)
-
-
-
 
 
 while True:
@@ -158,8 +144,5 @@ while True:
         window['CLIENTES'].update(values=clientes_conectados)
     else:
         window['CLIENTES'].update(values=['Sem clientes conectados'])
-
-
-    print('Valores: ', values)
 
 window.close()

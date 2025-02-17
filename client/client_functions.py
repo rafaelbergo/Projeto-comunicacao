@@ -31,8 +31,7 @@ def receber_mensagem(client_socket):
 
             opcao = dados.get('opcao')  
             mensagem = dados.get('mensagem')
-            print("opcao: ", opcao)
-            print("mensagem: ", mensagem)
+
             if opcao is not None and mensagem is not None:
                 return opcao, mensagem
             else:
@@ -44,24 +43,22 @@ def receber_mensagem(client_socket):
         return None, None
 
 
-def escolhe_opcao(opcao, mensagem, atualizaCampo):
-    ##
+def escolhe_opcao(opcao, mensagem, atualizaCampo, criaGrafico):
+    
     if opcao == 1:  # Caso para mensagem, mensagem criptografada, mensagem em binário e mensagem com algoritmo
-        print("mensag: ", mensagem)
+        atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
-        print("mensagem2: ", mensagem2)
-        atualizaCampo('REC_MSG_ALG', mensagem2)
+        atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2) 
         atualizaCampo('REC_MSG_CRIPTO', mensagem3) 
-        print("mensagem3: ", mensagem3)
-        atualizaCampo('REC_MSG_BIN', mensagem3)
         mensagem4 = descriptografaFernet(mensagem3)  
-        print("mensagem4: ", mensagem4)
-        atualizaCampo('REC_MSG', mensagem4)  
+        atualizaCampo('REC_MSG', mensagem4)
         return
-    ##
+    
     elif opcao == 2:  # Caso para mensagem criptografada, mensagem em binário e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2)
@@ -69,62 +66,65 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem4 = descriptografaFernet(mensagem3)  
         atualizaCampo('REC_MSG', mensagem4)  
         return
-    ##
+    
     elif opcao == 3:  # Caso para mensagem em binário e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
         return  
-    ##
+    
     elif opcao == 4:  # Caso para mensagem com algoritmo somente
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
         return
-    ##
+    
     elif opcao == 5:  # Caso para mensagem somente
         atualizaCampo('REC_MSG', mensagem)  
         return
-    ##
+    
     elif opcao == 6:  # Caso para mensagem criptografada somente
         atualizaCampo('REC_MSG_CRIPTO', mensagem)
         mensagem2 = descriptografaFernet(mensagem)
         atualizaCampo('REC_MSG', mensagem2) 
         return
-    ##
+    
     elif opcao == 7:  # Caso para mensagem em binário somente
         atualizaCampo('REC_MSG_BIN', mensagem)
         mensagem = desconverteBinario(mensagem)
         atualizaCampo('REC_MSG', mensagem) 
         return 
-    ##
+    
     elif opcao == 8:  # Caso vazio
         return
-    ##
+    
     elif opcao == 9:  # Caso para mensagem e mensagem criptografada
         atualizaCampo('REC_MSG_CRIPTO', mensagem)  
         mensagem2 = descriptografaFernet(mensagem) 
         atualizaCampo('REC_MSG', mensagem2) 
         return
-    ##
+    
     elif opcao == 10:  # Caso para mensagem e mensagem em binário
         atualizaCampo('REC_MSG_BIN', mensagem)  
         mensagem = desconverteBinario(mensagem) 
         atualizaCampo('REC_MSG', mensagem) 
         return
-    ##
+    
     elif opcao == 11:  # Caso para mensagem, mensagem em binario e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         mensagem3 = desconverteBinario(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
         return
-    ##
+    
     elif opcao == 12:  # Caso para mensagem, mensagem criptografada e mensagem em binário
         atualizaCampo('REC_MSG_BIN', mensagem)
         mensagem2 = desconverteBinario(mensagem)  
@@ -132,7 +132,7 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem3= descriptografaFernet(mensagem2)  
         atualizaCampo('REC_MSG', mensagem3)
         return
-    ##
+    
     elif opcao == 13:  # Caso para mensagem criptografada e mensagem em binário
         atualizaCampo('REC_MSG_BIN', mensagem)  
         mensagem2 = desconverteBinario(mensagem)  
@@ -140,15 +140,17 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
         mensagem3 = descriptografaFernet(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
         return
-    ##
+    
     if opcao == 14:  # Caso para mensagem em binario e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         atualizaCampo('REC_MSG_BIN', mensagem2)
         return
-    ##
+    
     if opcao == 15:  # Caso para mensagem e mensagem com algoritmo
         atualizaCampo('REC_MSG_ALG', mensagem)
+        criaGrafico(mensagem)
         mensagem2 = removeAlgoritmo_8b6T(mensagem)
         mensagem3 = desconverteBinario(mensagem2)
         atualizaCampo('REC_MSG', mensagem3)
@@ -157,14 +159,12 @@ def escolhe_opcao(opcao, mensagem, atualizaCampo):
     else:
         return
 
-
 def descriptografaFernet(mensagem_criptografada):
     keyENV = os.getenv('KEY')
     key = base64.b64decode(keyENV)
     cipher = Fernet(key)
     mensagem = cipher.decrypt(mensagem_criptografada.encode()).decode()
     return mensagem
-
 
 def desconverteBinario(mensagem_binaria):
     mensagem = ''.join(chr(int(b, 2)) for b in mensagem_binaria.split(' '))

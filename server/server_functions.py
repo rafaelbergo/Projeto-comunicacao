@@ -6,8 +6,6 @@ from dotenv import load_dotenv, dotenv_values
 from cryptography.fernet import Fernet
 import pandas as pd
 
-#from server import atualizaCampo
-
 load_dotenv() 
 
 def get_local_ip():
@@ -73,7 +71,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
             if flags['chk_msg_alg']:
                 mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
                 atualizaCampo('MSG_ALG', mensagem3)
-                #criaGrafico(mensagem3)
+                criaGrafico(mensagem3)
                 opcao = 2
                 enviar_mensagem(connection, mensagem3, opcao)
                 return
@@ -83,7 +81,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
         mensagem = mensagens['msg_bin']
         mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
         atualizaCampo('MSG_ALG', mensagem2)
-        #criaGrafico(mensagem2)
+        criaGrafico(mensagem2)
         opcao = 3
         enviar_mensagem(connection, mensagem2, opcao)
         return
@@ -93,6 +91,7 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
         mensagem = mensagens['msg_alg']
         atualizaCampo('MSG_ALG', mensagem)
         opcao = 4
+        criaGrafico(mensagem)
         enviar_mensagem(connection, mensagem, opcao)
         return
     
@@ -123,7 +122,6 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
     
     # Caso 8 vazio
     
-    
     # Caso para mensagem e mensagem criptografada
     if flags['chk_msg'] and flags['chk_msg_cripto'] and not flags['chk_msg_bin'] and not flags['chk_msg_alg']:
         mensagem = mensagens['msg']
@@ -145,14 +143,12 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
     # Caso para mensagem, mensagem em binario e mensagem com algoritmo
     if flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg']
-        print('mensagem', mensagem)
         mensagem2 = converteBinario(mensagem)
-        print('bin', mensagem2)
         atualizaCampo('MSG_BIN', mensagem2)
         mensagem3 = aplicaAlgoritmo_8b6T(mensagem2)
         atualizaCampo('MSG_ALG', mensagem3)
         opcao = 11
-        print(mensagem2)
+        criaGrafico(mensagem3)
         enviar_mensagem(connection, mensagem3, opcao)
         return
     
@@ -180,12 +176,11 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
     # Caso para mensagem em binario e mensagem com algoritmo
     if not flags['chk_msg'] and not flags['chk_msg_cripto'] and flags['chk_msg_bin'] and flags['chk_msg_alg']:
         mensagem = mensagens['msg_bin']
-        print("bin: ", mensagem)
         atualizaCampo('MSG_BIN', mensagem)
         mensagem2 = aplicaAlgoritmo_8b6T(mensagem)
-        print("alg: ", mensagem2)
         atualizaCampo('MSG_ALG', mensagem2)
         opcao = 14
+        criaGrafico(mensagem2)
         enviar_mensagem(connection, mensagem2, opcao)
         return
     
@@ -202,7 +197,6 @@ def escolhe_envio(connection, mensagens, flags, atualizaCampo, opcao, criaGrafic
     
     else:
         return
-
 
 
 # Usa o algoritmo de Fernet para criptografar
@@ -241,8 +235,6 @@ def aplicaAlgoritmo_8b6T(mensagem):
             encoded += matching_row['Value'].iloc[0] + ' '
 
     return encoded
-
-
 
 def enviar_mensagem(client_socket, mensagem, opcao):
     if client_socket:
